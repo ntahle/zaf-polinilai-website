@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Icebox ESP32 — MQTT Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="index.css?v=3" />
+</head>
+<body>
+  <div class="app">
+    <!-- ===== Header ===== -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" />
+            <path d="M9 22h6" />
+          </svg>
+        </div>
+        <div>
+          <h1>ICEBOX MONITORING DASHBOARD</h1>
+          <p class="subtitle">Icebox-ESP32</p>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <div id="connection-status" class="status-badge status-disconnected">
+          <span class="status-dot"></span>
+          <span id="status-text">Disconnected</span>
+        </div>
+        <button id="connect-btn" class="btn btn-primary">Connect</button>
+      </div>
+    </header>
+
+    <!-- ===== Metric Cards ===== -->
+    <section class="metrics">
+      <!-- Voltage -->
+      <div class="card metric-card gauge-card">
+        <div class="metric-header">
+          <span class="metric-label">Voltage</span>
+          <span class="gauge-header-value" id="voltage-value">= --</span>
+        </div>
+        <div class="metric-body">
+          <svg id="voltage-gauge" class="gauge-svg" viewBox="0 0 240 152" aria-label="Voltage gauge">
+            <!-- Track (9V → 12.7V over the top) -->
+            <path d="M 30 120 A 90 90 0 0 1 210 120" fill="none" stroke="#2a3550" stroke-width="14" stroke-linecap="round" opacity="0.5" />
+            <!-- Zones: 9-10V red, 10-11V yellow, 11-12.7V green -->
+            <path d="M 30 120 A 90 90 0 0 1 60.5 52.5" fill="none" stroke="#f87171" stroke-width="14" stroke-linecap="round" />
+            <path d="M 60.5 52.5 A 90 90 0 0 1 131.4 30.7" fill="none" stroke="#fbbf24" stroke-width="14" stroke-linecap="round" />
+            <path d="M 131.4 30.7 A 90 90 0 0 1 210 120" fill="none" stroke="#34d399" stroke-width="14" stroke-linecap="round" />
+            <!-- Tick labels -->
+            <text class="gauge-tick" x="14" y="143" text-anchor="start">9</text>
+            <text class="gauge-tick" x="48" y="38" text-anchor="middle">10</text>
+            <text class="gauge-tick" x="133" y="21" text-anchor="middle">11</text>
+            <text class="gauge-tick" x="226" y="143" text-anchor="end">12.7</text>
+            <!-- Needle (points left → 9V; rotates clockwise to 12.7V) -->
+            <g id="needle">
+              <line x1="120" y1="120" x2="34" y2="120" stroke="#f0f4ff" stroke-width="3" stroke-linecap="round" />
+              <circle cx="120" cy="120" r="6" fill="#f0f4ff" />
+              <circle cx="120" cy="120" r="2.5" fill="#1a2234" />
+            </g>
+          </svg>
+        </div>
+        <div class="metric-trend" id="voltage-trend"></div>
+        <!-- <div class="metric-trend"></div> -->
+
+      </div>
+
+      <!-- Temperature -->
+      <div class="card metric-card temp-card">
+        <div class="metric-header">
+          <span class="metric-label">Temperature</span>
+          <span class="gauge-header-value" id="temperature-value">= --</span>
+        </div>
+        <div class="metric-body">
+          <svg id="temperature-gauge" class="temp-gauge-svg" viewBox="0 0 300 92" aria-label="Temperature bar gauge">
+            <defs>
+              <clipPath id="bar-clip">
+                <rect x="12" y="36" width="276" height="18" rx="9" />
+              </clipPath>
+            </defs>
+            <!-- Zones clipped to a single smooth rounded bar: 0-7°C green, 7-9°C yellow, 9-15°C red -->
+            <g clip-path="url(#bar-clip)">
+              <rect x="12" y="36" width="129" height="18" fill="#34d399" />
+              <rect x="141" y="36" width="37" height="18" fill="#fbbf24" />
+              <rect x="178" y="36" width="110" height="18" fill="#f87171" />
+            </g>
+            <!-- Smooth outer outline -->
+            <rect x="12" y="36" width="276" height="18" rx="9" fill="none" stroke="#2a3550" stroke-width="1.5" opacity="0.6" />
+            <!-- Tick labels -->
+            <text class="gauge-tick" x="12" y="80" text-anchor="middle">0</text>
+            <text class="gauge-tick" x="141" y="80" text-anchor="middle">7</text>
+            <text class="gauge-tick" x="178" y="80" text-anchor="middle">9</text>
+            <text class="gauge-tick" x="288" y="80" text-anchor="middle">15</text>
+            <!-- Marker (slides along the bar) -->
+            <g id="temp-needle">
+              <polygon points="-6,14 6,14 0,36" fill="#f0f4ff" />
+            </g>
+          </svg>
+        </div>
+        <div class="metric-trend" id="temperature-trend"></div>
+        <!-- <div class="metric-trend"></div> -->
+
+      </div>
+
+      <!-- Device -->
+      <div class="card metric-card">
+        <div class="metric-header">
+          <span class="metric-label">Device</span>
+        </div>
+        <div class="metric-body device-body">
+          <span class="device-name" id="device-value">—</span>
+        </div>
+        <div class="metric-trend"></div>
+      </div>
+
+      <!-- Last Update -->
+      <div class="card metric-card">
+        <div class="metric-header">
+          <span class="metric-label">Last Update</span>
+        </div>
+        <div class="metric-body update-body">
+          <span class="uptime-value" id="last-update">—</span>
+          <span class="received-value" id="update-trend"></span>
+        </div>
+        <div class="metric-trend"></div>
+      </div>
+    </section>
+
+    <!-- ===== Chart + Log ===== -->
+    <section class="dashboard-grid">
+      <div class="card chart-card">
+        <div class="card-header">
+          <h2>Graph</h2>
+          <div class="legend">
+            <span class="legend-dot voltage"></span> Voltage
+            <span class="legend-dot temp"></span> Temp
+          </div>
+        </div>
+        <canvas id="history-chart"></canvas>
+      </div>
+
+      <div class="card log-card">
+        <div class="card-header">
+          <h2>Message Log</h2>
+          <button id="clear-log-btn" class="btn btn-ghost">Clear</button>
+        </div>
+        <div id="message-log" class="message-log"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- MQTT.js from CDN -->
+  <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
+  <script src="index.js?v=5"></script>
+</body>
+</html>

@@ -58,6 +58,13 @@ function loadState() {
   }
 }
 
+function colorizeLogText(text) {
+  // Wrap voltage / temperature values in colored spans for readability
+  return String(text)
+    .replace(/(voltage:\s*)([^·\s]+)/gi, '$1<span class="log-voltage">$2</span>')
+    .replace(/(temperature:\s*)([^·\s]+)/gi, '$1<span class="log-temp">$2</span>');
+}
+
 function renderLogEntries() {
   els.messageLog.innerHTML = '';
   if (logEntries.length === 0) {
@@ -81,7 +88,7 @@ function renderLogEntries() {
 
     const txt = document.createElement('span');
     txt.className = 'log-data';
-    txt.textContent = entry.text;
+    txt.innerHTML = colorizeLogText(entry.text);
 
     el.append(t, d, txt);
     els.messageLog.appendChild(el);
@@ -135,9 +142,9 @@ function updateTempBar(t) {
   // Color the header value by zone
   const zone = tempZone(t);
   const colors = {
-    success: getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || '#111111',
-    warning: getComputedStyle(document.documentElement).getPropertyValue('--warning').trim() || '#777777',
-    danger: getComputedStyle(document.documentElement).getPropertyValue('--danger').trim() || '#000000'
+    success: getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || '#34d399',
+    warning: getComputedStyle(document.documentElement).getPropertyValue('--warning').trim() || '#fbbf24',
+    danger: getComputedStyle(document.documentElement).getPropertyValue('--danger').trim() || '#f87171'
   };
   const color = colors[zone];
 
@@ -170,9 +177,9 @@ function updateGauge(v) {
   // Color the needle tip + value by zone
   const zone = voltageZone(v);
   const colors = {
-    danger: getComputedStyle(document.documentElement).getPropertyValue('--danger').trim() || '#000000',
-    warning: getComputedStyle(document.documentElement).getPropertyValue('--warning').trim() || '#777777',
-    success: getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || '#111111'
+    danger: getComputedStyle(document.documentElement).getPropertyValue('--danger').trim() || '#f87171',
+    warning: getComputedStyle(document.documentElement).getPropertyValue('--warning').trim() || '#fbbf24',
+    success: getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || '#34d399'
   };
   const color = colors[zone];
 
@@ -348,10 +355,10 @@ function handleMessage(topic, payload) {
       const prev = temperatureHistory[temperatureHistory.length - 1];
       if (t > prev) {
         els.temperatureTrend.textContent = `▲ ${(t - prev).toFixed(1)}°C since last`;
-        els.temperatureTrend.className = 'metric-trend down';
+        els.temperatureTrend.className = 'metric-trend up';
       } else if (t < prev) {
         els.temperatureTrend.textContent = `▼ ${(prev - t).toFixed(1)}°C since last`;
-        els.temperatureTrend.className = 'metric-trend up';
+        els.temperatureTrend.className = 'metric-trend down';
       } else {
         els.temperatureTrend.textContent = '';
         els.temperatureTrend.className = 'metric-trend';
@@ -412,7 +419,7 @@ function addLogEntry(device, text) {
 
   const data = document.createElement('span');
   data.className = 'log-data';
-  data.textContent = text;
+  data.innerHTML = colorizeLogText(text);
 
   entry.append(time, dev, data);
   els.messageLog.appendChild(entry);
@@ -549,7 +556,7 @@ function drawChart() {
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   }
-  ctx.strokeStyle = '#000000';
+  ctx.strokeStyle = '#38bdf8';
   ctx.lineWidth = 2.5;
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
@@ -557,8 +564,8 @@ function drawChart() {
 
   // Fill gradient under voltage line
   const grad = ctx.createLinearGradient(0, margin.top, 0, height - margin.bottom);
-  grad.addColorStop(0, 'rgba(0, 0, 0, 0.18)');
-  grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  grad.addColorStop(0, 'rgba(56, 189, 248, 0.25)');
+  grad.addColorStop(1, 'rgba(56, 189, 248, 0)');
   ctx.lineTo(mapX(points - 1), height - margin.bottom);
   ctx.lineTo(mapX(0), height - margin.bottom);
   ctx.closePath();
@@ -574,12 +581,12 @@ function drawChart() {
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     }
-    ctx.strokeStyle = '#777777';
+    ctx.strokeStyle = '#fbbf24';
     ctx.lineWidth = 2;
     ctx.stroke();
 
     // Offsets — draw data points
-    ctx.fillStyle = '#000000';
+    ctx.fillStyle = '#79d2fa';
     for (let i = 0; i < points; i++) {
       const x = mapX(i);
       const y = mapY(voltageHistory[i], vMin, vMax);

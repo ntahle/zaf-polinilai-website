@@ -13,13 +13,13 @@
   --text-primary: #000000;
   --text-secondary: #4a4a4a;
   --text-muted: #8a8a8a;
-  --accent: #000000;
-  --accent-secondary: #555555;
-  --success: #111111;
-  --warning: #777777;
-  --danger: #000000;
-  --voltage-color: #000000;
-  --temp-color: #777777;
+  --accent: #2563eb;
+  --accent-secondary: #38bdf8;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --voltage-color: #38bdf8;
+  --temp-color: #fbbf24;
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.14);
 }
 
@@ -65,10 +65,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #000000, #3a3a3a);
+  background: linear-gradient(135deg, #2563eb, #6366f1);
   border-radius: 14px;
   color: white;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
   flex-shrink: 0;
 }
 
@@ -113,23 +113,23 @@ body {
 }
 
 .status-disconnected .status-dot {
-  background: #000000;
+  background: var(--danger);
   animation: pulse 2s infinite;
 }
 
 .status-connecting .status-dot {
-  background: #8a8a8a;
+  background: var(--warning);
   animation: pulse 1s infinite;
 }
 
 .status-connected .status-dot {
-  background: #000000;
-  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #000000;
+  background: var(--success);
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--success);
   animation: pulse 2s infinite;
 }
 
 .status-connected {
-  border-color: #000000;
+  border-color: rgba(52, 211, 153, 0.4);
 }
 
 @keyframes pulse {
@@ -260,7 +260,7 @@ body {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #000000, #555555);
+  background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
   opacity: 0.5;
   transition: opacity 0.2s;
 }
@@ -270,19 +270,19 @@ body {
 }
 
 .gauge-card::before {
-  background: linear-gradient(90deg, var(--gauge-accent, #000000), #555555);
+  background: linear-gradient(90deg, var(--gauge-accent, var(--accent)), var(--accent-secondary));
 }
 
 .metric-card:nth-child(2)::before {
-  background: linear-gradient(90deg, #000000, #888888);
+  background: linear-gradient(90deg, var(--temp-color), #f97316);
 }
 
 .metric-card:nth-child(3)::before {
-  background: linear-gradient(90deg, #444444, #000000);
+  background: linear-gradient(90deg, #a78bfa, #ec4899);
 }
 
 .metric-card:nth-child(4)::before {
-  background: linear-gradient(90deg, #000000, #777777);
+  background: linear-gradient(90deg, var(--success), #10b981);
 }
 
 .metric-header {
@@ -366,12 +366,12 @@ body {
 }
 
 .metric-trend.up {
-  color: #000000;
+  color: var(--success);
   font-weight: 600;
 }
 
 .metric-trend.down {
-  color: #666666;
+  color: var(--danger);
 }
 
 /* ================= Device Card ================= */
@@ -404,8 +404,8 @@ body {
 
 .received-value {
   font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--text-secondary);
+  font-weight: 600;
+  color: var(--accent);
 }
 
 /* ================= Gauges ================= */
@@ -426,6 +426,14 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+
+#voltage-value {
+  color: var(--voltage-color);
+}
+
+#temperature-value {
+  color: var(--temp-color);
 }
 
 #needle {
@@ -567,14 +575,24 @@ body {
 }
 
 .log-device {
-  color: #000000;
+  color: var(--accent);
   font-weight: 600;
   flex-shrink: 0;
 }
 
 .log-data {
-  color: var(--text-primary);
+  color: var(--text-secondary);
   word-break: break-all;
+}
+
+.log-data .log-voltage {
+  color: var(--voltage-color);
+  font-weight: 600;
+}
+
+.log-data .log-temp {
+  color: var(--temp-color);
+  font-weight: 600;
 }
 
 /* ================= Responsive ================= */

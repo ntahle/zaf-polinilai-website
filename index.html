@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="index.css?v=7" />
+  <link rel="stylesheet" href="index.css?v=8" />
 </head>
 <body>
   <div class="app">
@@ -47,10 +47,10 @@
           <svg id="voltage-gauge" class="gauge-svg" viewBox="0 0 240 152" aria-label="Voltage gauge">
             <!-- Track (9V → 12.7V over the top) -->
             <path d="M 30 120 A 90 90 0 0 1 210 120" fill="none" stroke="#d9d9d9" stroke-width="14" stroke-linecap="round" opacity="0.7" />
-            <!-- Zones: 9-10V light, 10-11V mid, 11-12.7V solid -->
-            <path d="M 30 120 A 90 90 0 0 1 60.5 52.5" fill="none" stroke="#e8e8e8" stroke-width="14" stroke-linecap="round" />
-            <path d="M 60.5 52.5 A 90 90 0 0 1 131.4 30.7" fill="none" stroke="#9a9a9a" stroke-width="14" stroke-linecap="round" />
-            <path d="M 131.4 30.7 A 90 90 0 0 1 210 120" fill="none" stroke="#000000" stroke-width="14" stroke-linecap="round" />
+            <!-- Zones: 9-10V red, 10-11V yellow, 11-12.7V green -->
+            <path d="M 30 120 A 90 90 0 0 1 60.5 52.5" fill="none" stroke="#f87171" stroke-width="14" stroke-linecap="round" />
+            <path d="M 60.5 52.5 A 90 90 0 0 1 131.4 30.7" fill="none" stroke="#fbbf24" stroke-width="14" stroke-linecap="round" />
+            <path d="M 131.4 30.7 A 90 90 0 0 1 210 120" fill="none" stroke="#34d399" stroke-width="14" stroke-linecap="round" />
             <!-- Tick labels -->
             <text class="gauge-tick" x="14" y="143" text-anchor="start">9</text>
             <text class="gauge-tick" x="48" y="38" text-anchor="middle">10</text>
@@ -58,8 +58,8 @@
             <text class="gauge-tick" x="226" y="143" text-anchor="end">12.7</text>
             <!-- Needle (points left → 9V; rotates clockwise to 12.7V) -->
             <g id="needle">
-              <line x1="120" y1="120" x2="34" y2="120" stroke="#000000" stroke-width="3" stroke-linecap="round" />
-              <circle cx="120" cy="120" r="6" fill="#000000" />
+              <line x1="120" y1="120" x2="34" y2="120" stroke="#2563eb" stroke-width="3" stroke-linecap="round" />
+              <circle cx="120" cy="120" r="6" fill="#2563eb" />
               <circle cx="120" cy="120" r="2.5" fill="#ffffff" />
             </g>
           </svg>
@@ -82,14 +82,14 @@
                 <rect x="12" y="36" width="276" height="18" rx="9" />
               </clipPath>
             </defs>
-            <!-- Zones clipped to a single smooth rounded bar: 0-7°C solid, 7-9°C mid, 9-15°C light -->
+            <!-- Zones clipped to a single smooth rounded bar: 0-7°C green, 7-9°C yellow, 9-15°C red -->
             <g clip-path="url(#bar-clip)">
-              <rect x="12" y="36" width="129" height="18" fill="#000000" />
-              <rect x="141" y="36" width="37" height="18" fill="#9a9a9a" />
-              <rect x="178" y="36" width="110" height="18" fill="#e8e8e8" />
+              <rect x="12" y="36" width="129" height="18" fill="#34d399" />
+              <rect x="141" y="36" width="37" height="18" fill="#fbbf24" />
+              <rect x="178" y="36" width="110" height="18" fill="#f87171" />
             </g>
             <!-- Smooth outer outline -->
-            <rect x="12" y="36" width="276" height="18" rx="9" fill="none" stroke="#000000" stroke-width="1.5" opacity="0.35" />
+            <rect x="12" y="36" width="276" height="18" rx="9" fill="none" stroke="#2563eb" stroke-width="1.5" opacity="0.45" />
             <!-- Tick labels -->
             <text class="gauge-tick" x="12" y="80" text-anchor="middle">0</text>
             <text class="gauge-tick" x="141" y="80" text-anchor="middle">7</text>
@@ -97,7 +97,7 @@
             <text class="gauge-tick" x="288" y="80" text-anchor="middle">15</text>
             <!-- Marker (slides along the bar) -->
             <g id="temp-needle">
-              <polygon points="-6,14 6,14 0,36" fill="#000000" />
+              <polygon points="-6,14 6,14 0,36" fill="#2563eb" />
             </g>
           </svg>
         </div>
@@ -156,6 +156,6 @@
 
   <!-- MQTT.js from CDN -->
   <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
-  <script src="index.js?v=7"></script>
+  <script src="index.js?v=8"></script>
 </body>
 </html>

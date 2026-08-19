@@ -135,9 +135,9 @@ function updateTempBar(t) {
   // Color the header value by zone
   const zone = tempZone(t);
   const colors = {
-    success: getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || '#34d399',
-    warning: getComputedStyle(document.documentElement).getPropertyValue('--warning').trim() || '#fbbf24',
-    danger: getComputedStyle(document.documentElement).getPropertyValue('--danger').trim() || '#f87171'
+    success: getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || '#111111',
+    warning: getComputedStyle(document.documentElement).getPropertyValue('--warning').trim() || '#777777',
+    danger: getComputedStyle(document.documentElement).getPropertyValue('--danger').trim() || '#000000'
   };
   const color = colors[zone];
 
@@ -170,9 +170,9 @@ function updateGauge(v) {
   // Color the needle tip + value by zone
   const zone = voltageZone(v);
   const colors = {
-    danger: getComputedStyle(document.documentElement).getPropertyValue('--danger').trim() || '#f87171',
-    warning: getComputedStyle(document.documentElement).getPropertyValue('--warning').trim() || '#fbbf24',
-    success: getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || '#34d399'
+    danger: getComputedStyle(document.documentElement).getPropertyValue('--danger').trim() || '#000000',
+    warning: getComputedStyle(document.documentElement).getPropertyValue('--warning').trim() || '#777777',
+    success: getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || '#111111'
   };
   const color = colors[zone];
 
@@ -505,9 +505,9 @@ function drawChart() {
   const points = voltageHistory.length;
 
   // Grid & Y axis (voltage)
-  ctx.strokeStyle = '#2a3550';
+  ctx.strokeStyle = '#d9d9d9';
   ctx.lineWidth = 1;
-  ctx.fillStyle = '#64748b';
+  ctx.fillStyle = '#8a8a8a';
   ctx.font = '11px Inter, sans-serif';
   ctx.textAlign = 'right';
 
@@ -524,7 +524,7 @@ function drawChart() {
 
   // X axis labels
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#64748b';
+  ctx.fillStyle = '#8a8a8a';
   for (let i = 0; i < Math.min(points, 6); i++) {
     const idx = Math.floor((i / 5) * (points - 1));
     const x = margin.left + (idx / Math.max(points - 1, 1)) * chartW;
@@ -549,7 +549,7 @@ function drawChart() {
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   }
-  ctx.strokeStyle = '#38bdf8';
+  ctx.strokeStyle = '#000000';
   ctx.lineWidth = 2.5;
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
@@ -557,8 +557,8 @@ function drawChart() {
 
   // Fill gradient under voltage line
   const grad = ctx.createLinearGradient(0, margin.top, 0, height - margin.bottom);
-  grad.addColorStop(0, 'rgba(56, 189, 248, 0.25)');
-  grad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+  grad.addColorStop(0, 'rgba(0, 0, 0, 0.18)');
+  grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
   ctx.lineTo(mapX(points - 1), height - margin.bottom);
   ctx.lineTo(mapX(0), height - margin.bottom);
   ctx.closePath();
@@ -574,12 +574,12 @@ function drawChart() {
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     }
-    ctx.strokeStyle = '#fbbf24';
+    ctx.strokeStyle = '#777777';
     ctx.lineWidth = 2;
     ctx.stroke();
 
     // Offsets — draw data points
-    ctx.fillStyle = '#79d2fa';
+    ctx.fillStyle = '#000000';
     for (let i = 0; i < points; i++) {
       const x = mapX(i);
       const y = mapY(voltageHistory[i], vMin, vMax);

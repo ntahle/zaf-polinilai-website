@@ -5,22 +5,22 @@
 }
 
 :root {
-  --bg-primary: #0b0f1a;
-  --bg-secondary: #111827;
-  --bg-card: #1a2234;
-  --bg-card-hover: #1e2740;
-  --border: #2a3550;
-  --text-primary: #f0f4ff;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --accent: #38bdf8;
-  --accent-secondary: #22d3ee;
-  --success: #34d399;
-  --warning: #fbbf24;
-  --danger: #f87171;
-  --voltage-color: #38bdf8;
-  --temp-color: #fbbf24;
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.35);
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f4f4f4;
+  --border: #d9d9d9;
+  --text-primary: #000000;
+  --text-secondary: #4a4a4a;
+  --text-muted: #8a8a8a;
+  --accent: #000000;
+  --accent-secondary: #555555;
+  --success: #111111;
+  --warning: #777777;
+  --danger: #000000;
+  --voltage-color: #000000;
+  --temp-color: #777777;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.14);
 }
 
 html,
@@ -31,7 +31,7 @@ body {
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg-primary);
-  background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.08), transparent);
+  background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 0, 0, 0.04), transparent);
   color: var(--text-primary);
   min-height: 100vh;
   line-height: 1.5;
@@ -65,10 +65,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--accent), #6366f1);
+  background: linear-gradient(135deg, #000000, #3a3a3a);
   border-radius: 14px;
   color: white;
-  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   flex-shrink: 0;
 }
 
@@ -113,22 +113,23 @@ body {
 }
 
 .status-disconnected .status-dot {
-  background: var(--danger);
+  background: #000000;
   animation: pulse 2s infinite;
 }
 
 .status-connecting .status-dot {
-  background: var(--warning);
+  background: #8a8a8a;
   animation: pulse 1s infinite;
 }
 
 .status-connected .status-dot {
-  background: var(--success);
+  background: #000000;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #000000;
   animation: pulse 2s infinite;
 }
 
 .status-connected {
-  border-color: rgba(52, 211, 153, 0.4);
+  border-color: #000000;
 }
 
 @keyframes pulse {
@@ -153,14 +154,14 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent), #6366f1);
-  color: white;
-  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+  background: #000000;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(56, 189, 248, 0.35);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
 }
 
 .btn-primary:disabled {
@@ -181,6 +182,7 @@ body {
 .btn-ghost:hover {
   background: var(--bg-card-hover);
   color: var(--text-primary);
+  border-color: var(--text-primary);
 }
 
 /* ================= Broker Info ================= */
@@ -232,7 +234,7 @@ body {
 }
 
 .card:hover {
-  border-color: #34405e;
+  border-color: #000000;
 }
 
 .metrics {
@@ -258,7 +260,7 @@ body {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+  background: linear-gradient(90deg, #000000, #555555);
   opacity: 0.5;
   transition: opacity 0.2s;
 }
@@ -268,19 +270,19 @@ body {
 }
 
 .gauge-card::before {
-  background: linear-gradient(90deg, var(--gauge-accent, var(--accent)), var(--accent-secondary));
+  background: linear-gradient(90deg, var(--gauge-accent, #000000), #555555);
 }
 
 .metric-card:nth-child(2)::before {
-  background: linear-gradient(90deg, var(--temp-color), #f97316);
+  background: linear-gradient(90deg, #000000, #888888);
 }
 
 .metric-card:nth-child(3)::before {
-  background: linear-gradient(90deg, #a78bfa, #ec4899);
+  background: linear-gradient(90deg, #444444, #000000);
 }
 
 .metric-card:nth-child(4)::before {
-  background: linear-gradient(90deg, var(--success), #10b981);
+  background: linear-gradient(90deg, #000000, #777777);
 }
 
 .metric-header {
@@ -364,11 +366,12 @@ body {
 }
 
 .metric-trend.up {
-  color: var(--success);
+  color: #000000;
+  font-weight: 600;
 }
 
 .metric-trend.down {
-  color: var(--danger);
+  color: #666666;
 }
 
 /* ================= Device Card ================= */
@@ -545,7 +548,7 @@ body {
   gap: 10px;
   align-items: flex-start;
   padding: 8px 12px;
-  background: var(--bg-primary);
+  background: #f7f7f7;
   border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 0.74rem;
@@ -564,7 +567,7 @@ body {
 }
 
 .log-device {
-  color: var(--accent);
+  color: #000000;
   font-weight: 600;
   flex-shrink: 0;
 }

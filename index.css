@@ -520,6 +520,12 @@ body {
   max-height: 420px;
 }
 
+.log-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .message-log {
   flex: 1;
   overflow-y: auto;

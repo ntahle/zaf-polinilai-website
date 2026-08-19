@@ -114,6 +114,7 @@ const els = {
   canvas: $('history-chart'),
   messageLog: $('message-log'),
   clearLogBtn: $('clear-log-btn'),
+  exportLogBtn: $('export-log-btn'),
   gaugeNeedle: document.querySelector('#needle'),
   tempNeedle: document.querySelector('#temp-needle')
 };
@@ -394,7 +395,7 @@ function handleMessage(topic, payload) {
     .map(([k, v]) => `${k}: ${v}`)
     .join(' · ');
   addLogEntry(device, summary || raw);
-  recordLogEntry(device, summary || raw);
+  recordLogEntry(device, summary || raw, data.voltage, data.temperature);
 
   // ---- Save state & redraw chart ----
   saveState();
@@ -432,12 +433,14 @@ function addLogEntry(device, text) {
   els.messageLog.scrollTop = els.messageLog.scrollHeight;
 }
 
-function recordLogEntry(device, text) {
+function recordLogEntry(device, text, voltage, temperature) {
   logEntries.push({
     time: new Date().toLocaleTimeString([], { hour12: false }),
     date: new Date().toLocaleDateString(),
     device: device || 'Unknown',
-    text: text || ''
+    text: text || '',
+    voltage: typeof voltage !== 'undefined' ? voltage : '',
+    temperature: typeof temperature !== 'undefined' ? temperature : ''
   });
   while (logEntries.length > 50) logEntries.shift();
   saveState();
@@ -619,6 +622,48 @@ els.clearLogBtn.addEventListener('click', () => {
   renderLogEntries();
   drawChart();
 });
+
+// ==================== Export to Excel ====================
+els.exportLogBtn.addEventListener('click', exportLogToExcel);
+function exportLogToExcel() {
+  if (logEntries.length === 0) {
+    addLogEntry('—', 'No data to export');
+    return;
+  }
+
+  // Build CSV rows (opens directly in Excel / LibreOffice)
+  const header = ['No', 'Date', 'Time', 'Device', 'Voltage', 'Temperature', 'Data'];
+  const rows = logEntries.map((entry, i) => [
+    i + 1,
+    entry.date || '',
+    entry.time || '',
+    entry.device || '',
+    entry.voltage ?? '',
+    entry.temperature ?? '',
+    entry.text || ''
+  ]);
+
+  const escapeCell = (value) => {
+    const s = String(value ?? '');
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+
+  const csv = [header, ...rows]
+    .map((row) => row.map(escapeCell).join(','))
+    .join('\r\n');
+
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `icebox-message-log-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  addLogEntry('—', `Exported ${logEntries.length} entries`);
+}
 
 window.addEventListener('resize', resizeChart);
 function resizeChart() {

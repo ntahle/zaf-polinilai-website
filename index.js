@@ -27,6 +27,68 @@ let voltageHistory = [];
 let temperatureHistory = [];
 let timeHistory = [];
 
+// ==================== Persistence ====================
+const STORAGE_KEY = 'icebox-dashboard-data';
+let logEntries = [];
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      voltageHistory,
+      temperatureHistory,
+      timeHistory,
+      logEntries
+    }));
+  } catch (e) {
+    console.error('Failed to save state:', e);
+  }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (Array.isArray(saved.voltageHistory)) voltageHistory = saved.voltageHistory;
+    if (Array.isArray(saved.temperatureHistory)) temperatureHistory = saved.temperatureHistory;
+    if (Array.isArray(saved.timeHistory)) timeHistory = saved.timeHistory;
+    if (Array.isArray(saved.logEntries)) logEntries = saved.logEntries;
+  } catch (e) {
+    console.error('Failed to load state:', e);
+  }
+}
+
+function renderLogEntries() {
+  els.messageLog.innerHTML = '';
+  if (logEntries.length === 0) {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'log-empty';
+    placeholder.textContent = 'No messages yet.';
+    els.messageLog.appendChild(placeholder);
+    return;
+  }
+  logEntries.forEach((entry) => {
+    const el = document.createElement('div');
+    el.className = 'log-entry';
+
+    const t = document.createElement('span');
+    t.className = 'log-time';
+    t.textContent = entry.time;
+
+    const d = document.createElement('span');
+    d.className = 'log-device';
+    d.textContent = entry.device;
+
+    const txt = document.createElement('span');
+    txt.className = 'log-data';
+    txt.textContent = entry.text;
+
+    el.append(t, d, txt);
+    els.messageLog.appendChild(el);
+  });
+  els.messageLog.scrollTop = els.messageLog.scrollHeight;
+}
+
 // ==================== DOM References ====================
 const $ = (id) => document.getElementById(id);
 const els = {
@@ -325,8 +387,10 @@ function handleMessage(topic, payload) {
     .map(([k, v]) => `${k}: ${v}`)
     .join(' · ');
   addLogEntry(device, summary || raw);
+  recordLogEntry(device, summary || raw);
 
-  // ---- Redraw chart ----
+  // ---- Save state & redraw chart ----
+  saveState();
   drawChart();
 }
 
@@ -359,6 +423,17 @@ function addLogEntry(device, text) {
   }
 
   els.messageLog.scrollTop = els.messageLog.scrollHeight;
+}
+
+function recordLogEntry(device, text) {
+  logEntries.push({
+    time: new Date().toLocaleTimeString([], { hour12: false }),
+    date: new Date().toLocaleDateString(),
+    device: device || 'Unknown',
+    text: text || ''
+  });
+  while (logEntries.length > 50) logEntries.shift();
+  saveState();
 }
 
 // ==================== Payload Parsing ====================
@@ -525,11 +600,17 @@ els.connectBtn.addEventListener('click', () => {
 });
 
 els.clearLogBtn.addEventListener('click', () => {
-  els.messageLog.innerHTML = '';
-  const empty = document.createElement('div');
-  empty.className = 'log-empty';
-  empty.textContent = 'Log cleared.';
-  els.messageLog.appendChild(empty);
+  logEntries = [];
+  voltageHistory = [];
+  temperatureHistory = [];
+  timeHistory = [];
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (e) {
+    console.error('Failed to clear saved state:', e);
+  }
+  renderLogEntries();
+  drawChart();
 });
 
 window.addEventListener('resize', resizeChart);
@@ -539,6 +620,11 @@ function resizeChart() {
 
 // ==================== Auto-connect on load ====================
 window.addEventListener('load', () => {
+  // Restore previously saved state
+  loadState();
+  renderLogEntries();
+  drawChart();
+
   // Small delay to ensure mqtt.js is loaded from CDN
   setTimeout(connect, 300);
 });
